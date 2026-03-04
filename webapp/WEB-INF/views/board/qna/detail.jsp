@@ -6,7 +6,6 @@
 <div class="page-content"><div class="container">
     <div class="board-view">
         <h2 class="view-title">
-            <c:if test="${qna.isSecret == 'Y'}"><span class="badge badge-secret">비밀</span></c:if>
             ${qna.title}
         </h2>
         <div class="view-info">
@@ -40,3 +39,4 @@
         </div>
     </div>
 </div></div>
+

@@ -10,7 +10,6 @@ public class QnaDTO {
 
 	private String title;
 	private String content;
-	private String isSecret;
 	private String answer;
 	private String status;
 	private String memberId;
@@ -57,14 +56,6 @@ public class QnaDTO {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public String getIsSecret() {
-		return isSecret;
-	}
-
-	public void setIsSecret(String isSecret) {
-		this.isSecret = isSecret;
 	}
 
 	public String getAnswer() {
@@ -114,4 +105,10 @@ public class QnaDTO {
 	public void setRegDate(Timestamp regDate) {
 		this.regDate = regDate;
 	}
+
+	public Object getIsSecret() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
+

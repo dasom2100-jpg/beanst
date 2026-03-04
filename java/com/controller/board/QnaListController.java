@@ -6,14 +6,24 @@ import com.controller.Action;
 import com.dao.QnaDAO;
 import com.dto.QnaDTO;
 import com.util.PageInfo;
+import com.vo.UserVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class QnaListController implements Action {
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
+		
+		HttpSession session = request.getSession(false);
+		if (session == null || session.getAttribute("loginMember") == null) {
+			return "redirect:/login/login.do";
+		}
+
+		UserVO loginMember = (UserVO) session.getAttribute("loginMember");
+		String userId = loginMember.getUserId();
 
 		String pageParam = request.getParameter("page");
 		int currentPage = 1;
@@ -28,11 +38,11 @@ public class QnaListController implements Action {
 
 		QnaDAO dao = new QnaDAO();
 
-		int listCount = dao.getQnaCount(keyword);
+		int listCount = dao.getQnaCount(keyword, userId);
 
 		PageInfo pi = new PageInfo(currentPage, listCount, 5, 10);
 
-		List<QnaDTO> list = dao.selectQnaList(pi, keyword);
+		List<QnaDTO> list = dao.selectQnaList(pi, keyword, userId);
 		
 		request.setAttribute("pageTitle",  "Q&A");
 		request.setAttribute("keyword", keyword);

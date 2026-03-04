@@ -12,8 +12,8 @@
             <button type="submit" class="btn btn-primary btn-sm">검색</button>
         </form>
     </div>
-
-    <c:if test="${not empty sessionScope.loginUser && sessionScope.loginUser.role != 'ADMIN'}">
+    
+    <c:if test="${not empty sessionScope.loginMember && sessionScope.loginMember.role != 'ADMIN'}">
         <div class="text-right mb-10">
             <a href="${pageContext.request.contextPath}/qnaWriteForm.do" class="btn btn-primary btn-sm">문의 작성</a>
         </div>
@@ -31,19 +31,7 @@
                 <tr>
                     <td>${q.qnaNo}</td>
                     <td class="text-left">
-                        <c:choose>
-                            <c:when test="${q.isSecret == 'Y'}">
-                                <c:choose>
-                                    <c:when test="${not empty sessionScope.loginUser && (sessionScope.loginUser.memberNo == q.memberNo || sessionScope.loginUser.role == 'ADMIN')}">
-                                        <a href="${pageContext.request.contextPath}/qnaDetail.do?no=${q.qnaNo}"><span class="badge badge-secret">비밀</span> ${q.title}</a>
-                                    </c:when>
-                                    <c:otherwise><span class="badge badge-secret">비밀</span> 비밀글입니다.</c:otherwise>
-                                </c:choose>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/qnaDetail.do?no=${q.qnaNo}">${q.title}</a>
-                            </c:otherwise>
-                        </c:choose>
+                        <a href="${pageContext.request.contextPath}/qnaDetail.do?no=${q.qnaNo}">${q.title}</a>
                     </td>
                     <td>${fn:substring(q.memberId, 0, 3)}***</td>
                     <td><span class="badge badge-${fn:toLowerCase(q.status)}">${q.status == 'WAITING' ? '답변대기' : '답변완료'}</span></td>

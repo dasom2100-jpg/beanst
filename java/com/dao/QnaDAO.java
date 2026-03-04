@@ -13,7 +13,7 @@ import com.util.PageInfo;
 
 public class QnaDAO {
 
-	public int getQnaCount(String keyword) {
+	public int getQnaCount(String keyword, String userId) {
 
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -24,18 +24,23 @@ public class QnaDAO {
 
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT COUNT(*) ");
-			sql.append("FROM qna ");
+			sql.append("FROM qna q ");
+			sql.append("JOIN member m ON q.member_no = m.member_no ");
+			sql.append("WHERE m.member_id = ? ");
 
 			if (keyword != null && !keyword.isEmpty()) {
-				sql.append("WHERE title LIKE ? OR content LIKE ? ");
+				sql.append("AND (q.title LIKE ? OR q.content LIKE ?) ");
 			}
 
 			ps = conn.prepareStatement(sql.toString());
 
+			int idx = 1;
+			ps.setString(idx++, userId);
+
 			if (keyword != null && !keyword.isEmpty()) {
 				String kw = "%" + keyword + "%";
-				ps.setString(1, kw);
-				ps.setString(2, kw);
+				ps.setString(idx++, kw);
+				ps.setString(idx, kw);
 			}
 
 			rs = ps.executeQuery();
@@ -54,7 +59,7 @@ public class QnaDAO {
 		return 0;
 	}
 
-	public List<QnaDTO> selectQnaList(PageInfo pi, String keyword) {
+	public List<QnaDTO> selectQnaList(PageInfo pi, String keyword, String userId) {
 
 		List<QnaDTO> list = new ArrayList<>();
 
@@ -69,9 +74,10 @@ public class QnaDAO {
 			sql.append("SELECT q.*, m.member_id, m.member_name ");
 			sql.append("FROM qna q ");
 			sql.append("JOIN member m ON q.member_no = m.member_no ");
+			sql.append("WHERE m.member_id = ? ");
 
 			if (keyword != null && !keyword.isEmpty()) {
-				sql.append("WHERE q.title LIKE ? OR q.content LIKE ? ");
+				sql.append("AND (q.title LIKE ? OR q.content LIKE ?) ");
 			}
 
 			sql.append("ORDER BY q.qna_no DESC ");
@@ -80,6 +86,8 @@ public class QnaDAO {
 			ps = conn.prepareStatement(sql.toString());
 
 			int idx = 1;
+
+			ps.setString(idx++, userId);
 
 			if (keyword != null && !keyword.isEmpty()) {
 				String kw = "%" + keyword + "%";
@@ -98,7 +106,6 @@ public class QnaDAO {
 				q.setMemberNo(rs.getInt("member_no"));
 				q.setTitle(rs.getString("title"));
 				q.setContent(rs.getString("content"));
-				q.setIsSecret(rs.getString("is_secret"));
 				q.setAnswer(rs.getString("answer"));
 				q.setAnswerDate(rs.getTimestamp("answer_date"));
 				q.setStatus(rs.getString("status"));
@@ -161,7 +168,6 @@ public class QnaDAO {
 				q.setMemberNo(rs.getInt("member_no"));
 				q.setTitle(rs.getString("title"));
 				q.setContent(rs.getString("content"));
-				q.setIsSecret(rs.getString("is_secret"));
 				q.setAnswer(rs.getString("answer"));
 				q.setAnswerDate(rs.getTimestamp("answer_date"));
 				q.setStatus(rs.getString("status"));
@@ -184,5 +190,37 @@ public class QnaDAO {
 		}
 
 		return null;
+	}
+
+	public int insertQna(String userId, String title, String content) {
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = getConnection();
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("INSERT INTO qna (member_no, title, content, status, view_count, reg_date) ");
+			sql.append("VALUES (");
+			sql.append(" (SELECT m.member_no FROM member m WHERE m.member_id = ?), ");
+			sql.append(" ?, ?, 'WAITING', 0, NOW()");
+			sql.append(")");
+
+			ps = conn.prepareStatement(sql.toString());
+			ps.setString(1, userId);
+			ps.setString(2, title);
+			ps.setString(3, content);
+
+			return ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(ps);
+			close(conn);
+		}
+
+		return 0;
 	}
 }
