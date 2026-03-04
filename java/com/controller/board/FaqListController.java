@@ -27,4 +27,3 @@ public class FaqListController implements Action {
 		return "board/faq/list";
 	}
 }
-

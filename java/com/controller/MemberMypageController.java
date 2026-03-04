@@ -9,7 +9,7 @@ public class MemberMypageController implements Action {
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
 
 		request.setAttribute("contentPage", "/WEB-INF/views/member/mypage.jsp");
-		request.setAttribute("pageCss",      "mypage");
+		request.setAttribute("pageCss", "mypage");
 
 		return "common/layout";
 	}

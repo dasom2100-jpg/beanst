@@ -44,4 +44,3 @@ public class QnaListController implements Action {
 		return "board/qna/list";
 	}
 }
-

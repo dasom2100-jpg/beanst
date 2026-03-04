@@ -68,4 +68,3 @@ public class FaqDTO {
 		this.regDate = regDate;
 	}
 }
-

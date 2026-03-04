@@ -81,4 +81,3 @@ public class QnaDetailController implements Action {
 		return "board/qna/detail";
 	}
 }
-

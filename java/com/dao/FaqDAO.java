@@ -66,4 +66,3 @@ public class FaqDAO {
 		return list;
 	}
 }
-

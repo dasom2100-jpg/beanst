@@ -115,4 +115,3 @@ public class QnaDTO {
 		this.regDate = regDate;
 	}
 }
-

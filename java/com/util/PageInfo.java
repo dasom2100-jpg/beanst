@@ -70,4 +70,3 @@ public class PageInfo {
 		return endRow;
 	}
 }
-

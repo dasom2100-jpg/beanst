@@ -1,23 +1,23 @@
-package com.controller.admin;
+package com.controller;
 
-import com.controller.Action;
-import com.dto.AdminDTO;
-import com.service.admin.AdminLoginService;
+import com.service.LoginService;
+import com.vo.UserVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-public class AdminLoginController implements Action {
+public class LoginController implements Action  {
 
-    @Override
+	@Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
 
         String method = request.getMethod();
-
+        
+        request.setAttribute("pageCss", "style");
     
         if (method.equals("GET")) {
-            return "admin/login";
+            return "login/login";
         }
 
 
@@ -26,21 +26,20 @@ public class AdminLoginController implements Action {
             String userId = request.getParameter("user_id");
             String password = request.getParameter("password");
 
-            AdminLoginService service =
-                    new AdminLoginService(request.getServletContext());
-
-            AdminDTO admin = service.login(userId, password);
             
+            LoginService service =
+                    new LoginService(request.getServletContext());
 
+            UserVO login = service.login(userId, password);
 
-            if (admin != null) {
+            if (login != null) {
                 HttpSession session = request.getSession();
-                session.setAttribute("admin", admin);
+                session.setAttribute("loginMember", login);
 
-                return "redirect:/admin/dashboard.do";
+                return "redirect:/reservationMain.do";
             } else {
                 request.setAttribute("errorMsg", "아이디 또는 비밀번호가 틀렸습니다.");
-                return "admin/login";
+                return "login/login";
             }
         }
 

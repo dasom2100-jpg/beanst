@@ -35,7 +35,7 @@
 				<ul>
 					<li class="en"><strong>팀명 :</strong> Beans't Developers</li>
 					<li><strong>팀장 :</strong> 김영훈</li>
-					<li><strong>팀원 :</strong> 강태준, 김현우, 곽해신, 채미숙</li>
+					<li><strong>팀원 :</strong> 강태준, 김현우, 송은설, 채미숙</li>
 				</ul>
 
 				<c:if
