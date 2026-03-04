@@ -13,6 +13,8 @@
 
     <form action="${pageContext.request.contextPath}/login/login.do"
           method="post">
+          
+        <input type="hidden" name="dest" value="${param.dest != null ? param.dest : dest}">
 
         <div class="form-group">
             <label>ID</label>
@@ -29,11 +31,11 @@
        
         
         <div class="text-center mt-20" style="font-size: 13px">
-			<a href="${pageContext.request.contextPath}/findForm.do"
-				style="color: #888">아이디/비밀번호 찾기</a> | <a
-				href="${pageContext.request.contextPath}/joinForm.do"
-				style="color: #c9a96e">회원가입</a>
-		</div>
+         <a href="${pageContext.request.contextPath}/findForm.do"
+            style="color: #888">아이디/비밀번호 찾기</a> | <a
+            href="${pageContext.request.contextPath}/joinForm.do"
+            style="color: #c9a96e">회원가입</a>
+      </div>
         
     </form>
 </div>

@@ -25,8 +25,7 @@ public class QnaDAO {
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT COUNT(*) ");
 			sql.append("FROM qna q ");
-			sql.append("JOIN member m ON q.member_no = m.member_no ");
-			sql.append("WHERE m.member_id = ? ");
+			sql.append("WHERE q.user_id = ? ");
 
 			if (keyword != null && !keyword.isEmpty()) {
 				sql.append("AND (q.title LIKE ? OR q.content LIKE ?) ");
@@ -71,10 +70,10 @@ public class QnaDAO {
 			conn = getConnection();
 
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT q.*, m.member_id, m.member_name ");
+			sql.append("SELECT q.*, u.user_id AS member_id, u.name AS member_name ");
 			sql.append("FROM qna q ");
-			sql.append("JOIN member m ON q.member_no = m.member_no ");
-			sql.append("WHERE m.member_id = ? ");
+			sql.append("JOIN users u ON q.user_id = u.user_id ");
+			sql.append("WHERE u.user_id = ? ");
 
 			if (keyword != null && !keyword.isEmpty()) {
 				sql.append("AND (q.title LIKE ? OR q.content LIKE ?) ");
@@ -103,7 +102,6 @@ public class QnaDAO {
 			while (rs.next()) {
 				QnaDTO q = new QnaDTO();
 				q.setQnaNo(rs.getInt("qna_no"));
-				q.setMemberNo(rs.getInt("member_no"));
 				q.setTitle(rs.getString("title"));
 				q.setContent(rs.getString("content"));
 				q.setAnswer(rs.getString("answer"));
@@ -136,6 +134,7 @@ public class QnaDAO {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		boolean viewUpdated = false;
 
 		try {
 			conn = getConnection();
@@ -144,7 +143,10 @@ public class QnaDAO {
 			try {
 				ps = conn.prepareStatement("UPDATE qna SET view_count = view_count + 1 WHERE qna_no = ?");
 				ps.setInt(1, no);
-				ps.executeUpdate();
+				int updated = ps.executeUpdate();
+				if (updated > 0) {
+					viewUpdated = true;
+				}
 				close(ps);
 				ps = null;
 			} catch (Exception e) {
@@ -152,9 +154,9 @@ public class QnaDAO {
 			}
 
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT q.*, m.member_id, m.member_name ");
+			sql.append("SELECT q.*, u.user_id AS member_id, u.name AS member_name ");
 			sql.append("FROM qna q ");
-			sql.append("JOIN member m ON q.member_no = m.member_no ");
+			sql.append("JOIN users u ON q.user_id = u.user_id ");
 			sql.append("WHERE q.qna_no = ?");
 
 			ps = conn.prepareStatement(sql.toString());
@@ -165,7 +167,6 @@ public class QnaDAO {
 			if (rs.next()) {
 				QnaDTO q = new QnaDTO();
 				q.setQnaNo(rs.getInt("qna_no"));
-				q.setMemberNo(rs.getInt("member_no"));
 				q.setTitle(rs.getString("title"));
 				q.setContent(rs.getString("content"));
 				q.setAnswer(rs.getString("answer"));
@@ -178,11 +179,20 @@ public class QnaDAO {
 					q.setMemberName(rs.getString("member_name"));
 				} catch (Exception ignore) {
 				}
+
+				if (viewUpdated) {
+					commit(conn);
+				} else {
+					rollback(conn);
+				}
 				return q;
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			if (conn != null) {
+				rollback(conn);
+			}
 		} finally {
 			close(rs);
 			close(ps);
@@ -196,26 +206,35 @@ public class QnaDAO {
 
 		Connection conn = null;
 		PreparedStatement ps = null;
+		int result = 0;
 
 		try {
 			conn = getConnection();
 
 			StringBuilder sql = new StringBuilder();
-			sql.append("INSERT INTO qna (member_no, title, content, status, view_count, reg_date) ");
-			sql.append("VALUES (");
-			sql.append(" (SELECT m.member_no FROM member m WHERE m.member_id = ?), ");
-			sql.append(" ?, ?, 'WAITING', 0, NOW()");
-			sql.append(")");
+			sql.append("INSERT INTO qna (user_id, title, content, status, view_count, reg_date) ");
+			sql.append("VALUES (?, ?, ?, 'WAITING', 0, NOW())");
 
 			ps = conn.prepareStatement(sql.toString());
 			ps.setString(1, userId);
 			ps.setString(2, title);
 			ps.setString(3, content);
 
-			return ps.executeUpdate();
+			result = ps.executeUpdate();
+
+			if (result > 0) {
+				commit(conn);
+			} else {
+				rollback(conn);
+			}
+
+			return result;
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			if (conn != null) {
+				rollback(conn);
+			}
 		} finally {
 			close(ps);
 			close(conn);

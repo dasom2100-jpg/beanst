@@ -35,7 +35,9 @@ public class QnaInsertController implements Action {
 			return "redirect:/qnaList.do";
 		} else {
 			request.setAttribute("errorMsg", "문의 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
-			return "/WEB-INF/views/board/qna/write.jsp";
+			request.setAttribute("pageTitle", "Q&A 작성");
+			request.setAttribute("pageCss", "style");
+			return "board/qna/write";
 		}
 	}
 }
