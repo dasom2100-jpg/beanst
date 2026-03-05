@@ -36,7 +36,7 @@ public class QnaListController implements Action {
 
 		String keyword = request.getParameter("keyword");
 
-		QnaDAO dao = new QnaDAO();
+		QnaDAO dao = new QnaDAO(request.getServletContext());
 
 		int listCount = dao.getQnaCount(keyword, userId);
 

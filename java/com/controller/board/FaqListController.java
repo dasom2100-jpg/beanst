@@ -16,7 +16,9 @@ public class FaqListController implements Action {
 
 		String category = request.getParameter("category");
 
-		FaqDAO dao = new FaqDAO();
+		// AdminLoginService → AdminDAO 패턴과 동일하게
+		// ServletContext를 넘겨서 Mapper XML을 로드하도록 변경
+		FaqDAO dao = new FaqDAO(request.getServletContext());
 		List<FaqDTO> faqList = dao.selectFaqList(category);
 		request.setAttribute("pageTitle",  "FAQ");
 		request.setAttribute("faqList", faqList);

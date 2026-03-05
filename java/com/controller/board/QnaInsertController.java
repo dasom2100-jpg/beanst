@@ -28,7 +28,7 @@ public class QnaInsertController implements Action {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 
-		QnaDAO dao = new QnaDAO();
+		QnaDAO dao = new QnaDAO(request.getServletContext());
 		int result = dao.insertQna(userId, title, content);
 
 		if (result > 0) {

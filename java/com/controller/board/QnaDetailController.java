@@ -26,7 +26,7 @@ public class QnaDetailController implements Action {
 			return "redirect:/qnaList.do";
 		}
 
-		QnaDAO dao = new QnaDAO();
+		QnaDAO dao = new QnaDAO(request.getServletContext());
 		QnaDTO qna = dao.selectQna(no);
 
 		if (qna == null) {

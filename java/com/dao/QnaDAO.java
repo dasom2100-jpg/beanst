@@ -2,16 +2,32 @@ package com.dao;
 
 import static com.util.JdbcUtil.*;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.dto.QnaDTO;
 import com.util.PageInfo;
 
+import jakarta.servlet.ServletContext;
+
 public class QnaDAO {
+
+	private Properties props = new Properties();
+
+	public QnaDAO(ServletContext context) {
+		try {
+			System.out.println("QnaDAO 생성자 실행");
+			InputStream input = context.getResourceAsStream("/WEB-INF/config/qnaMapper.xml");
+			props.loadFromXML(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public int getQnaCount(String keyword, String userId) {
 
@@ -22,13 +38,13 @@ public class QnaDAO {
 		try {
 			conn = getConnection();
 
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT COUNT(*) ");
-			sql.append("FROM qna q ");
-			sql.append("WHERE q.user_id = ? ");
+			StringBuilder sql = new StringBuilder(props.getProperty("qnaCountBase"));
+
+			// 로그인한 사용자 글만 카운트
+			sql.append(" AND q.user_id = ? ");
 
 			if (keyword != null && !keyword.isEmpty()) {
-				sql.append("AND (q.title LIKE ? OR q.content LIKE ?) ");
+				sql.append(" AND (q.title LIKE ? OR q.content LIKE ?) ");
 			}
 
 			ps = conn.prepareStatement(sql.toString());
@@ -69,18 +85,17 @@ public class QnaDAO {
 		try {
 			conn = getConnection();
 
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT q.*, u.user_id AS member_id, u.name AS member_name ");
-			sql.append("FROM qna q ");
-			sql.append("JOIN users u ON q.user_id = u.user_id ");
-			sql.append("WHERE u.user_id = ? ");
+			StringBuilder sql = new StringBuilder(props.getProperty("qnaListBase"));
+
+			// 로그인한 사용자 글만 조회
+			sql.append(" AND q.user_id = ? ");
 
 			if (keyword != null && !keyword.isEmpty()) {
-				sql.append("AND (q.title LIKE ? OR q.content LIKE ?) ");
+				sql.append(" AND (q.title LIKE ? OR q.content LIKE ?) ");
 			}
 
-			sql.append("ORDER BY q.qna_no DESC ");
-			sql.append("LIMIT ?, ?");
+			sql.append(" ORDER BY q.qna_no DESC ");
+			sql.append(" LIMIT ?, ?");
 
 			ps = conn.prepareStatement(sql.toString());
 
@@ -139,9 +154,10 @@ public class QnaDAO {
 		try {
 			conn = getConnection();
 
-			// 조회수 증가
+			// 조회수 증가 쿼리도 XML에서 관리
 			try {
-				ps = conn.prepareStatement("UPDATE qna SET view_count = view_count + 1 WHERE qna_no = ?");
+				String updateSql = props.getProperty("qnaUpdateViewCount");
+				ps = conn.prepareStatement(updateSql);
 				ps.setInt(1, no);
 				int updated = ps.executeUpdate();
 				if (updated > 0) {
@@ -153,13 +169,9 @@ public class QnaDAO {
 				e.printStackTrace();
 			}
 
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT q.*, u.user_id AS member_id, u.name AS member_name ");
-			sql.append("FROM qna q ");
-			sql.append("JOIN users u ON q.user_id = u.user_id ");
-			sql.append("WHERE q.qna_no = ?");
+			String selectSql = props.getProperty("qnaSelect");
 
-			ps = conn.prepareStatement(sql.toString());
+			ps = conn.prepareStatement(selectSql);
 			ps.setInt(1, no);
 
 			rs = ps.executeQuery();
@@ -211,11 +223,9 @@ public class QnaDAO {
 		try {
 			conn = getConnection();
 
-			StringBuilder sql = new StringBuilder();
-			sql.append("INSERT INTO qna (user_id, title, content, status, view_count, reg_date) ");
-			sql.append("VALUES (?, ?, ?, 'WAITING', 0, NOW())");
+			String insertSql = props.getProperty("qnaInsert");
 
-			ps = conn.prepareStatement(sql.toString());
+			ps = conn.prepareStatement(insertSql);
 			ps.setString(1, userId);
 			ps.setString(2, title);
 			ps.setString(3, content);
