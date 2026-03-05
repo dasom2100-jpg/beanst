@@ -21,7 +21,7 @@ public class FaqListController implements Action {
 		request.setAttribute("pageTitle",  "FAQ");
 		request.setAttribute("faqList", faqList);
 		request.setAttribute("category", category);
-		request.setAttribute("pageCss", "style");
+		request.setAttribute("pageCss", "board");
 //		String pageCss = (String) request.getAttribute("pageCss");
 //		System.out.println("가져온 값: " + pageCss);
 		return "board/faq/list";

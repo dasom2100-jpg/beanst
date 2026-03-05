@@ -233,4 +233,61 @@ public class AdminFacilityDAO {
 
 		return facilityId;
 	}
+
+	public void setNewImageMain(Connection conn, int facilityId, int index) throws Exception {
+
+	    String sql = props.getProperty("facilitySetNewMain");
+
+	    PreparedStatement ps = conn.prepareStatement(sql);
+
+	    ps.setInt(1, facilityId);
+	    ps.setInt(2, index);
+
+	    ps.executeUpdate();
+
+	    ps.close();
+	}
+
+	public void setFirstImageMain(Connection conn, int facilityId) throws Exception {
+
+		String sql = props.getProperty("setFirstImage");
+
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setInt(1, facilityId);
+		ps.executeUpdate();
+		ps.close();
+	}
+
+	public void deleteFacility(Connection conn, int facilityId) throws Exception {
+
+		String sql = props.getProperty("facilityDelete");
+
+		PreparedStatement ps = conn.prepareStatement(sql);
+
+		ps.setInt(1, facilityId);
+
+		ps.executeUpdate();
+
+		ps.close();
+	}
+	public int insertImageReturnId(Connection conn, int facilityId, String imagePath, String isMain) throws Exception {
+
+	    String sql = props.getProperty("facilityImageInsert");
+	    PreparedStatement ps = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
+
+	    ps.setInt(1, facilityId);
+	    ps.setString(2, imagePath);
+	    ps.setString(3, isMain);
+
+	    ps.executeUpdate();
+
+	    int newId = 0;
+	    ResultSet rs = ps.getGeneratedKeys();
+	    if (rs.next()) newId = rs.getInt(1);
+
+	    rs.close();
+	    ps.close();
+
+	    return newId;
+	}
 }

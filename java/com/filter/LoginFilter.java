@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/reservation/booking.do", "/reservation/check.do", "/qnaList.do", "/contact.do"})
+@WebFilter(urlPatterns = {"/reservation/booking.do", "/reservation/check.do", "/qnaList.do"})
 public class LoginFilter implements Filter {
 
     @Override
@@ -31,11 +31,9 @@ public class LoginFilter implements Filter {
         	String uri = req.getRequestURI();
             String contextPath = req.getContextPath();
             String path = uri.substring(contextPath.length());
-            System.out.println("로그인필터  path : "+path);
             
             // 이 주소로 이동해야 LoginController가 CSS를 세팅해줍니다.
             res.sendRedirect(contextPath + "/login/login.do?dest=" + path);
-            return;
         }
     }
 }

@@ -1,11 +1,11 @@
 package com.controller.board;
 
 import java.util.List;
+import com.util.PageInfo;
 
 import com.controller.Action;
 import com.dao.QnaDAO;
 import com.dto.QnaDTO;
-import com.util.PageInfo;
 import com.vo.UserVO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class QnaListController implements Action {
 
 		int listCount = dao.getQnaCount(keyword, userId);
 
-		PageInfo pi = new PageInfo(currentPage, listCount, 5, 10);
+		PageInfo pi = new PageInfo(currentPage, listCount, 5, 5);
 
 		List<QnaDTO> list = dao.selectQnaList(pi, keyword, userId);
 		
@@ -48,7 +48,7 @@ public class QnaListController implements Action {
 		request.setAttribute("keyword", keyword);
 		request.setAttribute("pi", pi);
 		request.setAttribute("list", list);
-		request.setAttribute("pageCss", "style");
+		request.setAttribute("pageCss", "board");
 		request.setAttribute("contentPage", "/WEB-INF/views/board/qna/list.jsp");
 
 		return "board/qna/list";
