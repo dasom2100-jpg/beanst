@@ -19,6 +19,7 @@ import com.controller.ReservationMainController;
 import com.controller.admin.AdminDashboardController;
 import com.controller.admin.AdminLoginController;
 import com.controller.admin.AdminLogoutController;
+import com.controller.admin.AdminQnaController;
 import com.controller.admin.AdminRoomAddController;
 import com.controller.admin.AdminRoomDeleteController;
 import com.controller.admin.AdminRoomDetailController;
@@ -56,6 +57,9 @@ public class HandlerMapper {
 		map.put("/qnaDetail.do",           new QnaDetailController());
 		map.put("/qnaWriteForm.do",        new QnaWriteController());
 		map.put("/qnaInsert.do",           new QnaInsertController());
+		
+		//===== 게시판 어드민 ====
+		map.put("/admin/qnaManage.do", new AdminQnaController());
 
 		map.put("/admin/login.do", new AdminLoginController());
 		map.put("/admin/dashboard.do", new AdminDashboardController());
