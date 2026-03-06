@@ -16,7 +16,7 @@ public class QnaListController implements Action {
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
-		
+
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("loginMember") == null) {
 			return "redirect:/login/login.do";
@@ -43,8 +43,8 @@ public class QnaListController implements Action {
 		PageInfo pi = new PageInfo(currentPage, listCount, 5, 5);
 
 		List<QnaDTO> list = dao.selectQnaList(pi, keyword, userId);
-		
-		request.setAttribute("pageTitle",  "Q&A");
+
+		request.setAttribute("pageTitle", "Q&A");
 		request.setAttribute("keyword", keyword);
 		request.setAttribute("pi", pi);
 		request.setAttribute("list", list);

@@ -15,9 +15,9 @@ import com.dto.FaqDTO;
 import jakarta.servlet.ServletContext;
 
 public class FaqDAO {
-	
+
 	private Properties props = new Properties();
-	
+
 	public FaqDAO(ServletContext context) {
 		try {
 			System.out.println("FaqDAO 생성자 실행");
@@ -43,7 +43,7 @@ public class FaqDAO {
 			// 기본 SELECT 문은 faqMapper.xml에 정의
 			String sql = props.getProperty("faqlist");
 
-			if (category != null && !category.isEmpty()) {
+			if (!(category == null || category.equals("") ) ) {
 				sql += " AND category = ? ";
 			}
 
@@ -55,6 +55,9 @@ public class FaqDAO {
 				ps.setString(1, category);
 			}
 
+			System.out.println("\n==============================\n");
+			System.out.println("sql문 : "+sql);
+			System.out.println("\n==============================\n");
 			rs = ps.executeQuery();
 
 			while (rs.next()) {

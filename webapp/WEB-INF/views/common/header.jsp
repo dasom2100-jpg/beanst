@@ -25,12 +25,16 @@
 				<c:if test="${sessionScope.loginMember != null}">
 					<li><p>${sessionScope.loginMember.name}님환영합니다.</p></li>
 
-					<li><a class="logout-btn" href="${pageContext.request.contextPath}/logout.do" class="ko">로그아웃</a>
+					<li><a class="logout-btn"
+						href="${pageContext.request.contextPath}/logout.do" class="ko">로그아웃</a>
 					</li>
 
 				</c:if>
-				<li><a href="${pageContext.request.contextPath}/qnaList.do"	id="reserv" class="text">1:1 문의하기</a></li>
-				<li><a href="${pageContext.request.contextPath}/reservationMain.do" class="ko">예약</a></li>
+				<li><a href="${pageContext.request.contextPath}/qnaList.do"
+					id="reserv" class="text">1:1 문의하기</a></li>
+				<li><a
+					href="${pageContext.request.contextPath}/reservationMain.do"
+					class="ko">예약</a></li>
 			</ul>
 		</div>
 	</div>
