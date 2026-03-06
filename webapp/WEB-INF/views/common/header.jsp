@@ -10,7 +10,7 @@
 		});
 	});
 </script>
-
+<script src="${pageContext.request.contextPath}/assets/js/header-responsive.js"></script>
 
 <header id="hdr">
 	<div class="hdr_inner">

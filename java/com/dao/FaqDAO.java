@@ -21,7 +21,7 @@ public class FaqDAO {
 	public FaqDAO(ServletContext context) {
 		try {
 			System.out.println("FaqDAO 생성자 실행");
-			// AdminDAO와 동일한 방식으로 Mapper XML을 로드
+			
 			InputStream input = context.getResourceAsStream("/WEB-INF/config/faqMapper.xml");
 			props.loadFromXML(input);
 		} catch (Exception e) {
@@ -37,6 +37,7 @@ public class FaqDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
+		System.out.println("카테고리: "+category);
 		try {
 			conn = getConnection();
 
@@ -51,13 +52,10 @@ public class FaqDAO {
 
 			ps = conn.prepareStatement(sql);
 
-			if (category != null && !category.isEmpty()) {
+			if (!(category == null || category.equals("") ) ) {
 				ps.setString(1, category);
 			}
 
-			System.out.println("\n==============================\n");
-			System.out.println("sql문 : "+sql);
-			System.out.println("\n==============================\n");
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
