@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+
+	<entry key="faqlist">
+		SELECT faq_no,
+		category,
+		question,
+		answer,
+		sort_order,
+		status,
+		reg_date
+		FROM faq
+		WHERE status = 'ACTIVE'
+	</entry>
+
+</properties>

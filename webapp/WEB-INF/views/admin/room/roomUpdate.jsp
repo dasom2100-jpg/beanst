@@ -1,0 +1,175 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<div class="admin-room-write">
+	<h2 class="admin-title">객실 수정</h2>
+
+	<form action="${pageContext.request.contextPath}/admin/roomUpdate.do"
+		method="post" enctype="multipart/form-data">
+		<input type="hidden" name="room_id" value="${vo.room_id}">
+
+		<div class="form-group">
+			<label>객실명</label> <input type="text" name="room_name"
+				value="${vo.room_name}">
+		</div>
+		<div class="form-group">
+			<label>정원</label> <input type="text" name="capacity"
+				value="${vo.capacity}">
+		</div>
+		<div class="form-group">
+			<label>위치</label> <input type="text" name="room_location"
+				value="${vo.room_location}">
+		</div>
+		<div class="form-group">
+			<label>룸구성</label>
+			<textarea name="room_description">${vo.room_description}</textarea>
+		</div>
+		<div class="form-group">
+			<label>이용시간</label> <input type="text" name="usage_time"
+				value="${vo.usage_time}">
+		</div>
+		<div class="form-group">
+			<label>어매니티</label> <input type="text" name="amenity"
+				value="${vo.amenity}">
+		</div>
+		<div class="form-group">
+			<label>미니바</label> <input type="text" name="minibar"
+				value="${vo.minibar}">
+		</div>
+		<div id="save">
+			<label class="saveImage">기존이미지</label><br>
+			<script>
+				let existingImageCount = ${imageVO.size()};
+			</script>
+			<c:forEach var="image" items="${imageVO}">
+				<div class="saveImgBox">
+					<img src="${image.image_path}" width="200">
+					<div class="inputBox">
+						<input type="radio" name="main_image" value="${image.image_no}"
+							${image.is_main eq 'Y' ? 'checked' : ''}>대표이미지 <input
+							type="checkbox" name="delete_images" value="${image.image_no}"
+							onclick="toggleDelete(this)">삭제
+					</div>
+				</div>
+			</c:forEach>
+		</div>
+
+
+
+		<div class="form-group">
+			<label>이미지</label> <input type="file" id="room_img" name="room_img"
+				multiple accept="image/*" onchange="previewImages(event)">
+		</div>
+
+		<div id="preview"></div>
+
+		<div class="form-buttons">
+			<button type="submit" class="btn-save">수정</button>
+			<a class="btn-list"
+				href='${pageContext.request.contextPath}/admin/roomManage.do'">
+				목록</a>
+		</div>
+
+
+	</form>
+</div>
+<script>
+
+let selectedFiles = [];
+
+function previewImages(event) {
+
+    const preview = document.getElementById("preview");
+    const input = document.getElementById("room_img");
+
+    const files = Array.from(event.target.files);
+
+
+    if (existingImageCount + selectedFiles.length + files.length > 5) {
+        alert("이미지는 최대 5개까지 등록 가능합니다.");
+        event.target.value = "";
+        return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+
+        const file = files[i];
+
+        if (!file.type.startsWith("image/")) {
+            alert("이미지 파일만 업로드 가능합니다.");
+            event.target.value = "";
+            return;
+        }
+
+    }
+
+    selectedFiles = selectedFiles.concat(files);
+
+    renderPreview();
+    updateInputFiles();
+}
+
+function renderPreview() {
+
+    const preview = document.getElementById("preview");
+    preview.innerHTML = "";
+
+    selectedFiles.forEach((file, index) => {
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+
+            const wrapper = document.createElement("div");
+            wrapper.style.marginBottom = "10px";
+
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.width = 200;
+
+
+            const removeCheck = document.createElement("input");
+            removeCheck.type = "checkbox";
+
+            removeCheck.onchange = function() {
+
+                if (this.checked) {
+                    selectedFiles.splice(index, 1);
+                    renderPreview();
+                    updateInputFiles();
+                }
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(document.createElement("br"));
+
+			wrapper.appendChild(removeCheck);
+			wrapper.appendChild(document.createTextNode(" 등록취소"));
+
+            preview.appendChild(wrapper);
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+function updateInputFiles() {
+
+    const input = document.getElementById("room_img");
+    const dataTransfer = new DataTransfer();
+
+    selectedFiles.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    input.files = dataTransfer.files;
+}
+function toggleDelete(checkbox){
+
+    if(checkbox.checked){
+        existingImageCount--;
+    }else{
+        existingImageCount++;
+    }
+}
+</script>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+
+	<entry key="qnaCountBase">
+		SELECT COUNT(*)
+		FROM qna q
+		WHERE 1 = 1
+	</entry>
+
+
+	<entry key="qnaListBase">
+		SELECT q.*,
+		u.user_id AS member_id,
+		u.name AS member_name
+		FROM qna q
+		JOIN users u ON q.user_id = u.user_id
+		WHERE 1 = 1
+	</entry>
+
+
+	<entry key="qnaSelect">
+		SELECT q.*,
+		u.user_id AS member_id,
+		u.name AS member_name
+		FROM qna q
+		JOIN users u ON q.user_id = u.user_id
+		WHERE q.qna_no = ?
+	</entry>
+
+	<entry key="qnaUpdateViewCount">
+		UPDATE qna
+		SET view_count = view_count + 1
+		WHERE qna_no = ?
+	</entry>
+
+
+	<entry key="qnaInsert">
+		INSERT INTO qna (user_id, title, content, status, view_count, reg_date)
+		VALUES (?, ?, ?, 'WAITING', 0, NOW())
+	</entry>
+
+</properties>
